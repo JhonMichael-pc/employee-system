@@ -5,47 +5,35 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 class Program
 {
     static int Main(string[] args)
     {
         string opcion = "";
-        string exit = "no";
 
-        List<Department> listdepartments = new List<Department>()
+        Dictionary<int, string> departments = new Dictionary<int, string>()
         {
-            new Department { Id = 1, Name = "IT" },
-            new Department { Id = 2, Name = "Human Resources" },
-            new Department { Id = 3, Name = "Finance" },
-            new Department { Id = 4, Name = "Sales" },
-            new Department { Id = 5, Name = "Marketing" }
+            { 1, "IT" },
+            { 2, "Human Resources" },
+            { 3, "Finance" },
+            { 4, "Sales" }
         };
 
-        List<Position> listpositions = new List<Position>()
+        Dictionary<int, string> positions = new Dictionary<int, string>()
         {
-            new Position { Id = 1, Name = "Developer" },
-            new Position { Id = 2, Name = "Manager" },
-            new Position { Id = 3, Name = "Accountant" },
-            new Position { Id = 4, Name = "Sales Representative" },
-            new Position { Id = 5, Name = "Designer" },
-            new Position { Id = 6, Name = "Technician" }
+            { 1, "Developer" },
+            { 2, "Manager" },
+            { 3, "Accountant" },
+            { 4, "Sales Representative" }
         };
 
-        Dictionary<int, Employee> employees = new Dictionary<int, Employee>()
-        {
-            { 1, new Employee { Id = 1, Name = "Michael", Lastname = "De La Rosa", Idcard = "00100000001", Department = listdepartments[0], Position = listpositions[0] } },
-            { 2, new Employee { Id = 2, Name = "Carlos", Lastname = "Martinez", Idcard = "00100000002", Department = listdepartments[0], Position = listpositions[5] } },
-            { 3, new Employee { Id = 3, Name = "Maria", Lastname = "Rodriguez", Idcard = "00100000003", Department = listdepartments[1], Position = listpositions[1] } },
-            { 4, new Employee { Id = 4, Name = "Jose", Lastname = "Perez", Idcard = "00100000004", Department = listdepartments[2], Position = listpositions[2] } },
-            { 5, new Employee { Id = 5, Name = "Ana", Lastname = "Gomez", Idcard = "00100000005", Department = listdepartments[3], Position = listpositions[3] } },
-            { 6, new Employee { Id = 6, Name = "Pedro", Lastname = "Ramirez", Idcard = "00100000006", Department = listdepartments[4], Position = listpositions[4] } },
-            { 7, new Employee { Id = 7, Name = "Laura", Lastname = "Fernandez", Idcard = "00100000007", Department = listdepartments[0], Position = listpositions[0] } },
-            { 8, new Employee { Id = 8, Name = "Luis", Lastname = "Hernandez", Idcard = "00100000008", Department = listdepartments[2], Position = listpositions[2] } },
-            { 9, new Employee { Id = 9, Name = "Sofia", Lastname = "Castillo", Idcard = "00100000009", Department = listdepartments[1], Position = listpositions[1] } },
-            { 10, new Employee { Id = 10, Name = "Daniel", Lastname = "Torres", Idcard = "00100000010", Department = listdepartments[3], Position = listpositions[3] } }
-        };
+        List<int> ids = new List<int> { 1, 2, 3, 4, 5 };
+        List<string> names = new List<string> { "Michael", "Carlos", "Maria", "Jose", "Ana" };
+        List<string> lastnames = new List<string> { "De La Rosa", "Martinez", "Rodriguez", "Perez", "Gomez" };
+        List<string> idcards = new List<string> { "00108450001", "00112300002", "00140840003", "00145060004", "00104289005" };
+        List<string> empDepartments = new List<string> { "IT", "IT", "Human Resources", "Finance", "Sales" };
+        List<string> empPositions = new List<string> { "Developer", "Developer", "Manager", "Accountant", "Sales Representative" };
 
         do
         {
@@ -58,9 +46,7 @@ class Program
             Console.WriteLine("4. Modify Employee");
             Console.WriteLine("5. Delete Employee");
             Console.WriteLine("6. List by Department");
-            Console.WriteLine("7. Add Department");
-            Console.WriteLine("8. Add Position");
-            Console.WriteLine("9. Exit");
+            Console.WriteLine("7. Exit");
             Console.WriteLine("============================");
 
             opcion = (Console.ReadLine() ?? "").Trim();
@@ -71,605 +57,469 @@ class Program
                 {
                     case "1":
                         {
-                            exit = "yes";
+                            Console.WriteLine("--------Adding New Employee----------");
 
-                            do
+                            int id;
+
+                            while (true)
                             {
-                                Console.Clear();
-                                Console.WriteLine("--------Adding New Employee----------");
+                                Console.WriteLine("Enter the ID:");
 
-                                Employee newemployee = new Employee();
-
-                                int employeeId;
-
-                                while (true)
+                                if (!int.TryParse(Console.ReadLine(), out id) || id <= 0)
                                 {
-                                    Console.WriteLine("Please enter the employee's ID:");
+                                    Console.WriteLine("Invalid ID.");
+                                    continue;
+                                }
 
-                                    if (!int.TryParse(Console.ReadLine(), out employeeId) || employeeId <= 0)
+                                if (ids.Contains(id))
+                                {
+                                    Console.WriteLine("This ID already exists.");
+                                    continue;
+                                }
+
+                                break;
+                            }
+
+                            Console.WriteLine("Enter the name:");
+                            string name = (Console.ReadLine() ?? "").Trim();
+
+                            while (name == "")
+                            {
+                                Console.WriteLine("ERROR: The name cannot be empty:");
+                                name = (Console.ReadLine() ?? "").Trim();
+                            }
+
+                            Console.WriteLine("Enter the last name:");
+                            string lastname = (Console.ReadLine() ?? "").Trim();
+
+                            while (lastname == "")
+                            {
+                                Console.WriteLine("ERROR: The last name cannot be empty:");
+                                lastname = (Console.ReadLine() ?? "").Trim();
+                            }
+
+                            string idcard;
+
+                            while (true)
+                            {
+                                Console.WriteLine("Enter the ID card (11 digits):");
+                                idcard = (Console.ReadLine() ?? "").Trim();
+
+                                bool onlyDigits = true;
+
+                                foreach (char c in idcard)
+                                {
+                                    if (!char.IsDigit(c))
                                     {
-                                        Console.WriteLine("Invalid ID format.");
-                                        continue;
+                                        onlyDigits = false;
                                     }
+                                }
 
-                                    if (employees.ContainsKey(employeeId))
-                                    {
-                                        Console.WriteLine("This ID already exists.");
-                                        continue;
-                                    }
+                                if (idcard.Length != 11 || !onlyDigits)
+                                {
+                                    Console.WriteLine("The ID card must have exactly 11 digits.");
+                                    continue;
+                                }
 
+                                if (idcards.Contains(idcard))
+                                {
+                                    Console.WriteLine("This ID card already exists.");
+                                    continue;
+                                }
+
+                                break;
+                            }
+
+                            string department;
+
+                            while (true)
+                            {
+                                Console.WriteLine("Select the department:");
+
+                                foreach (KeyValuePair<int, string> d in departments)
+                                {
+                                    Console.WriteLine($"{d.Key}. {d.Value}");
+                                }
+
+                                if (int.TryParse(Console.ReadLine(), out int depId) && departments.TryGetValue(depId, out string? depName))
+                                {
+                                    department = depName;
                                     break;
                                 }
 
-                                newemployee.Id = employeeId;
+                                Console.WriteLine("Invalid selection.");
+                            }
 
-                                Console.WriteLine("Please enter the employee's name:");
-                                string name = (Console.ReadLine() ?? "").Trim();
+                            string position;
 
-                                while (name == "")
+                            while (true)
+                            {
+                                Console.WriteLine("Select the position:");
+
+                                foreach (KeyValuePair<int, string> p in positions)
                                 {
-                                    Console.WriteLine("ERROR: Please enter a name:");
-                                    name = (Console.ReadLine() ?? "").Trim();
+                                    Console.WriteLine($"{p.Key}. {p.Value}");
                                 }
 
-                                newemployee.Name = name;
-
-                                Console.WriteLine("Please enter the employee's last name:");
-                                string lastname = (Console.ReadLine() ?? "").Trim();
-
-                                while (lastname == "")
+                                if (int.TryParse(Console.ReadLine(), out int posId) && positions.TryGetValue(posId, out string? posName))
                                 {
-                                    Console.WriteLine("ERROR: Please enter the last name:");
-                                    lastname = (Console.ReadLine() ?? "").Trim();
-                                }
-
-                                newemployee.Lastname = lastname;
-
-                                while (true)
-                                {
-                                    Console.WriteLine("Please enter the employee's ID card (11 digits):");
-                                    string idcard = (Console.ReadLine() ?? "").Trim();
-
-                                    if (idcard.Length != 11 || !idcard.All(char.IsDigit))
-                                    {
-                                        Console.WriteLine("ERROR: The ID card must have exactly 11 digits.");
-                                        continue;
-                                    }
-
-                                    if (employees.Values.Any(e => e.Idcard == idcard))
-                                    {
-                                        Console.WriteLine("This ID card already exists.");
-                                        continue;
-                                    }
-
-                                    newemployee.Idcard = idcard;
+                                    position = posName;
                                     break;
                                 }
 
-                                Department? selectedDepartment = null;
+                                Console.WriteLine("Invalid selection.");
+                            }
 
-                                while (selectedDepartment == null)
-                                {
-                                    Console.WriteLine("Select the department:");
+                            ids.Add(id);
+                            names.Add(name);
+                            lastnames.Add(lastname);
+                            idcards.Add(idcard);
+                            empDepartments.Add(department);
+                            empPositions.Add(position);
 
-                                    foreach (Department dep in listdepartments)
-                                    {
-                                        Console.WriteLine($"{dep.Id}. {dep.Name}");
-                                    }
-
-                                    if (int.TryParse(Console.ReadLine(), out int depId))
-                                    {
-                                        selectedDepartment = listdepartments.Find(d => d.Id == depId);
-                                    }
-
-                                    if (selectedDepartment == null)
-                                    {
-                                        Console.WriteLine("Invalid selection.");
-                                    }
-                                }
-
-                                newemployee.Department = selectedDepartment;
-
-                                Position? selectedPosition = null;
-
-                                while (selectedPosition == null)
-                                {
-                                    Console.WriteLine("Select the position:");
-
-                                    foreach (Position pos in listpositions)
-                                    {
-                                        Console.WriteLine($"{pos.Id}. {pos.Name}");
-                                    }
-
-                                    if (int.TryParse(Console.ReadLine(), out int posId))
-                                    {
-                                        selectedPosition = listpositions.Find(p => p.Id == posId);
-                                    }
-
-                                    if (selectedPosition == null)
-                                    {
-                                        Console.WriteLine("Invalid selection.");
-                                    }
-                                }
-
-                                newemployee.Position = selectedPosition;
-
-                                employees.Add(newemployee.Id, newemployee);
-
-                                Console.WriteLine("Employee added successfully.");
-                                Console.WriteLine("Would you like to continue? (yes/no)");
-                                exit = (Console.ReadLine() ?? "").Trim().ToLower();
-
-                            } while (exit == "yes" || exit == "y");
-
-                            Console.Clear();
+                            Console.WriteLine("Employee added successfully.");
                             break;
                         }
 
                     case "2":
                         {
-                            Console.Clear();
                             Console.WriteLine("--------Employee List----------");
 
-                            if (employees.Count == 0)
+                            if (ids.Count == 0)
                             {
                                 Console.WriteLine("No employees registered yet.");
                             }
                             else
                             {
-                                foreach (Employee emp in employees.Values.OrderBy(e => e.Id))
+                                for (int i = 0; i < ids.Count; i++)
                                 {
-                                    Console.WriteLine(emp);
+                                    Console.WriteLine($"ID: {ids[i]} | {names[i]} {lastnames[i]} | ID Card: {idcards[i]} | Department: {empDepartments[i]} | Position: {empPositions[i]}");
                                 }
                             }
 
-                            Console.WriteLine("Press ENTER to return to the menu...");
-                            Console.ReadLine();
-                            Console.Clear();
                             break;
                         }
 
                     case "3":
                         {
-                            exit = "no";
+                            Console.WriteLine("--------Search Employee--------");
+                            Console.WriteLine("1. Search by ID");
+                            Console.WriteLine("2. Search by ID Card");
+                            Console.WriteLine("3. Search by Name or Last Name");
+                            Console.WriteLine("4. Search by Department");
 
-                            do
+                            string searchOpcion = (Console.ReadLine() ?? "").Trim();
+                            List<int> results = new List<int>();
+                            bool validSearch = true;
+
+                            if (searchOpcion == "1")
                             {
-                                Console.Clear();
-                                Console.WriteLine("--------Search Employee--------");
-                                Console.WriteLine("1. Search by ID");
-                                Console.WriteLine("2. Search by ID Card");
-                                Console.WriteLine("3. Search by Name or Last Name");
-                                Console.WriteLine("4. Search by Department");
+                                Console.WriteLine("Enter the ID:");
 
-                                string searchOpcion = (Console.ReadLine() ?? "").Trim();
-
-                                if (searchOpcion == "1")
+                                if (int.TryParse(Console.ReadLine(), out int searchId))
                                 {
-                                    Console.WriteLine("Enter the employee ID:");
-                                    int searchId;
+                                    int found = ids.IndexOf(searchId);
 
-                                    while (!int.TryParse(Console.ReadLine(), out searchId) || searchId <= 0)
+                                    if (found != -1)
                                     {
-                                        Console.WriteLine("Invalid ID format. Try again:");
-                                    }
-
-                                    if (employees.TryGetValue(searchId, out Employee? found))
-                                    {
-                                        Console.WriteLine("FOUND:");
-                                        Console.WriteLine(found);
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Employee Not Found.");
+                                        results.Add(found);
                                     }
                                 }
-                                else if (searchOpcion == "2")
+                                else
                                 {
-                                    Console.WriteLine("Enter the ID card:");
-                                    string searchIdCard = (Console.ReadLine() ?? "").Trim();
-
-                                    while (searchIdCard == "")
-                                    {
-                                        Console.WriteLine("ID card cannot be empty. Try again:");
-                                        searchIdCard = (Console.ReadLine() ?? "").Trim();
-                                    }
-
-                                    Employee? foundByCard = employees.Values.FirstOrDefault(e => e.Idcard == searchIdCard);
-
-                                    if (foundByCard != null)
-                                    {
-                                        Console.WriteLine("FOUND:");
-                                        Console.WriteLine(foundByCard);
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Employee Not Found.");
-                                    }
+                                    Console.WriteLine("Invalid ID format.");
+                                    validSearch = false;
                                 }
-                                else if (searchOpcion == "3")
+                            }
+                            else if (searchOpcion == "2")
+                            {
+                                Console.WriteLine("Enter the ID card:");
+                                string searchIdCard = (Console.ReadLine() ?? "").Trim();
+
+                                int found = idcards.IndexOf(searchIdCard);
+
+                                if (found != -1)
                                 {
-                                    Console.WriteLine("Enter the name or last name:");
-                                    string searchName = (Console.ReadLine() ?? "").Trim();
+                                    results.Add(found);
+                                }
+                            }
+                            else if (searchOpcion == "3")
+                            {
+                                Console.WriteLine("Enter the name or last name:");
+                                string searchName = (Console.ReadLine() ?? "").Trim();
 
-                                    while (searchName == "")
+                                if (searchName == "")
+                                {
+                                    Console.WriteLine("The text cannot be empty.");
+                                    validSearch = false;
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < ids.Count; i++)
                                     {
-                                        Console.WriteLine("Name cannot be empty. Try again:");
-                                        searchName = (Console.ReadLine() ?? "").Trim();
-                                    }
-
-                                    List<Employee> foundByName = employees.Values
-                                        .Where(e => e.Name.Contains(searchName, StringComparison.OrdinalIgnoreCase)
-                                                 || e.Lastname.Contains(searchName, StringComparison.OrdinalIgnoreCase))
-                                        .OrderBy(e => e.Id)
-                                        .ToList();
-
-                                    if (foundByName.Count == 0)
-                                    {
-                                        Console.WriteLine("Employee Not Found.");
-                                    }
-                                    else
-                                    {
-                                        foreach (Employee emp in foundByName)
+                                        if (names[i].Contains(searchName, StringComparison.OrdinalIgnoreCase) || lastnames[i].Contains(searchName, StringComparison.OrdinalIgnoreCase))
                                         {
-                                            Console.WriteLine(emp);
+                                            results.Add(i);
                                         }
                                     }
                                 }
-                                else if (searchOpcion == "4")
+                            }
+                            else if (searchOpcion == "4")
+                            {
+                                Console.WriteLine("Select the department:");
+
+                                foreach (KeyValuePair<int, string> d in departments)
                                 {
-                                    Department? searchDepartment = null;
+                                    Console.WriteLine($"{d.Key}. {d.Value}");
+                                }
 
-                                    while (searchDepartment == null)
+                                if (int.TryParse(Console.ReadLine(), out int searchDepId) && departments.TryGetValue(searchDepId, out string? searchDepName))
+                                {
+                                    for (int i = 0; i < ids.Count; i++)
                                     {
-                                        Console.WriteLine("Select the department:");
-
-                                        foreach (Department dep in listdepartments)
+                                        if (empDepartments[i] == searchDepName)
                                         {
-                                            Console.WriteLine($"{dep.Id}. {dep.Name}");
-                                        }
-
-                                        if (int.TryParse(Console.ReadLine(), out int searchDepId))
-                                        {
-                                            searchDepartment = listdepartments.Find(d => d.Id == searchDepId);
-                                        }
-
-                                        if (searchDepartment == null)
-                                        {
-                                            Console.WriteLine("Invalid selection.");
-                                        }
-                                    }
-
-                                    List<Employee> foundByDepartment = employees.Values
-                                        .Where(e => e.Department.Id == searchDepartment.Id)
-                                        .OrderBy(e => e.Id)
-                                        .ToList();
-
-                                    if (foundByDepartment.Count == 0)
-                                    {
-                                        Console.WriteLine("No employees found.");
-                                    }
-                                    else
-                                    {
-                                        foreach (Employee emp in foundByDepartment)
-                                        {
-                                            Console.WriteLine(emp);
+                                            results.Add(i);
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Invalid Option.");
+                                    Console.WriteLine("Invalid selection.");
+                                    validSearch = false;
                                 }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid option.");
+                                validSearch = false;
+                            }
 
-                                Console.WriteLine("Do you want to return to the main menu? (yes/no)");
-                                exit = (Console.ReadLine() ?? "").Trim().ToLower();
+                            if (validSearch)
+                            {
+                                if (results.Count == 0)
+                                {
+                                    Console.WriteLine("No employees found.");
+                                }
+                                else
+                                {
+                                    foreach (int r in results)
+                                    {
+                                        Console.WriteLine($"ID: {ids[r]} | {names[r]} {lastnames[r]} | ID Card: {idcards[r]} | Department: {empDepartments[r]} | Position: {empPositions[r]}");
+                                    }
+                                }
+                            }
 
-                            } while (exit == "no" || exit == "n");
-
-                            Console.Clear();
                             break;
                         }
 
                     case "4":
                         {
-                            exit = "no";
+                            Console.WriteLine("--------Modifying Employee----------");
+                            Console.WriteLine("Enter the employee ID to modify:");
 
-                            do
+                            if (int.TryParse(Console.ReadLine(), out int modifyId))
                             {
-                                Console.Clear();
-                                Console.WriteLine("--------Modifying Employee----------");
-                                Console.WriteLine("Please enter the employee ID to modify:");
+                                int index = ids.IndexOf(modifyId);
 
-                                if (int.TryParse(Console.ReadLine(), out int modifyId) && modifyId > 0)
+                                if (index != -1)
                                 {
-                                    if (employees.TryGetValue(modifyId, out Employee? employeeToModify))
+                                    Console.WriteLine("Current information:");
+                                    Console.WriteLine($"ID: {ids[index]} | {names[index]} {lastnames[index]} | ID Card: {idcards[index]} | Department: {empDepartments[index]} | Position: {empPositions[index]}");
+
+                                    Console.WriteLine("Enter the new name (ENTER to keep current):");
+                                    string newName = (Console.ReadLine() ?? "").Trim();
+
+                                    if (newName != "")
                                     {
-                                        Console.WriteLine("============================");
-                                        Console.WriteLine($"Current information for employee ID {modifyId}:");
-                                        Console.WriteLine(employeeToModify);
-                                        Console.WriteLine("============================");
+                                        names[index] = newName;
+                                    }
 
-                                        Console.WriteLine("Enter the new name (ENTER to keep current):");
-                                        string newName = (Console.ReadLine() ?? "").Trim();
+                                    Console.WriteLine("Enter the new last name (ENTER to keep current):");
+                                    string newLastname = (Console.ReadLine() ?? "").Trim();
 
-                                        if (newName != "")
+                                    if (newLastname != "")
+                                    {
+                                        lastnames[index] = newLastname;
+                                    }
+
+                                    while (true)
+                                    {
+                                        Console.WriteLine("Enter the new ID card, 11 digits (ENTER to keep current):");
+                                        string newIdcard = (Console.ReadLine() ?? "").Trim();
+
+                                        if (newIdcard == "")
                                         {
-                                            employeeToModify.Name = newName;
-                                        }
-
-                                        Console.WriteLine("Enter the new last name (ENTER to keep current):");
-                                        string newLastname = (Console.ReadLine() ?? "").Trim();
-
-                                        if (newLastname != "")
-                                        {
-                                            employeeToModify.Lastname = newLastname;
-                                        }
-
-                                        while (true)
-                                        {
-                                            Console.WriteLine("Enter the new ID card, 11 digits (ENTER to keep current):");
-                                            string newIdcard = (Console.ReadLine() ?? "").Trim();
-
-                                            if (newIdcard == "")
-                                            {
-                                                break;
-                                            }
-
-                                            if (newIdcard.Length != 11 || !newIdcard.All(char.IsDigit))
-                                            {
-                                                Console.WriteLine("ERROR: The ID card must have exactly 11 digits.");
-                                                continue;
-                                            }
-
-                                            if (employees.Values.Any(e => e.Idcard == newIdcard && e.Id != modifyId))
-                                            {
-                                                Console.WriteLine("This ID card already exists.");
-                                                continue;
-                                            }
-
-                                            employeeToModify.Idcard = newIdcard;
                                             break;
                                         }
 
-                                        while (true)
+                                        bool onlyDigits = true;
+
+                                        foreach (char c in newIdcard)
                                         {
-                                            Console.WriteLine("Select the new department (ENTER to keep current):");
-
-                                            foreach (Department dep in listdepartments)
+                                            if (!char.IsDigit(c))
                                             {
-                                                Console.WriteLine($"{dep.Id}. {dep.Name}");
+                                                onlyDigits = false;
                                             }
-
-                                            string depInput = (Console.ReadLine() ?? "").Trim();
-
-                                            if (depInput == "")
-                                            {
-                                                break;
-                                            }
-
-                                            if (int.TryParse(depInput, out int newDepId))
-                                            {
-                                                Department? newDepartment = listdepartments.Find(d => d.Id == newDepId);
-
-                                                if (newDepartment != null)
-                                                {
-                                                    employeeToModify.Department = newDepartment;
-                                                    break;
-                                                }
-                                            }
-
-                                            Console.WriteLine("Invalid selection.");
                                         }
 
-                                        while (true)
+                                        if (newIdcard.Length != 11 || !onlyDigits)
                                         {
-                                            Console.WriteLine("Select the new position (ENTER to keep current):");
-
-                                            foreach (Position pos in listpositions)
-                                            {
-                                                Console.WriteLine($"{pos.Id}. {pos.Name}");
-                                            }
-
-                                            string posInput = (Console.ReadLine() ?? "").Trim();
-
-                                            if (posInput == "")
-                                            {
-                                                break;
-                                            }
-
-                                            if (int.TryParse(posInput, out int newPosId))
-                                            {
-                                                Position? newPosition = listpositions.Find(p => p.Id == newPosId);
-
-                                                if (newPosition != null)
-                                                {
-                                                    employeeToModify.Position = newPosition;
-                                                    break;
-                                                }
-                                            }
-
-                                            Console.WriteLine("Invalid selection.");
+                                            Console.WriteLine("The ID card must have exactly 11 digits.");
+                                            continue;
                                         }
 
-                                        Console.WriteLine("Employee information updated successfully.");
+                                        int existing = idcards.IndexOf(newIdcard);
+
+                                        if (existing != -1 && existing != index)
+                                        {
+                                            Console.WriteLine("This ID card already exists.");
+                                            continue;
+                                        }
+
+                                        idcards[index] = newIdcard;
+                                        break;
                                     }
-                                    else
+
+                                    while (true)
                                     {
-                                        Console.WriteLine("Employee not found.");
+                                        Console.WriteLine("Select the new department (ENTER to keep current):");
+
+                                        foreach (KeyValuePair<int, string> d in departments)
+                                        {
+                                            Console.WriteLine($"{d.Key}. {d.Value}");
+                                        }
+
+                                        string depInput = (Console.ReadLine() ?? "").Trim();
+
+                                        if (depInput == "")
+                                        {
+                                            break;
+                                        }
+
+                                        if (int.TryParse(depInput, out int newDepId) && departments.TryGetValue(newDepId, out string? newDepName))
+                                        {
+                                            empDepartments[index] = newDepName;
+                                            break;
+                                        }
+
+                                        Console.WriteLine("Invalid selection.");
                                     }
+
+                                    while (true)
+                                    {
+                                        Console.WriteLine("Select the new position (ENTER to keep current):");
+
+                                        foreach (KeyValuePair<int, string> p in positions)
+                                        {
+                                            Console.WriteLine($"{p.Key}. {p.Value}");
+                                        }
+
+                                        string posInput = (Console.ReadLine() ?? "").Trim();
+
+                                        if (posInput == "")
+                                        {
+                                            break;
+                                        }
+
+                                        if (int.TryParse(posInput, out int newPosId) && positions.TryGetValue(newPosId, out string? newPosName))
+                                        {
+                                            empPositions[index] = newPosName;
+                                            break;
+                                        }
+
+                                        Console.WriteLine("Invalid selection.");
+                                    }
+
+                                    Console.WriteLine("Employee information updated successfully.");
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Invalid ID format.");
+                                    Console.WriteLine("Employee not found.");
                                 }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid ID format.");
+                            }
 
-                                Console.WriteLine("Do you want to return to the main menu? (yes/no)");
-                                exit = (Console.ReadLine() ?? "").Trim().ToLower();
-
-                            } while (exit == "no" || exit == "n");
-
-                            Console.Clear();
                             break;
                         }
 
                     case "5":
                         {
-                            exit = "no";
+                            Console.WriteLine("--------Deleting Employee----------");
+                            Console.WriteLine("Enter the employee ID to delete:");
 
-                            do
+                            if (int.TryParse(Console.ReadLine(), out int deleteId))
                             {
-                                Console.Clear();
-                                Console.WriteLine("--------Deleting Employee----------");
-                                Console.WriteLine("Please enter the employee ID to delete:");
+                                int index = ids.IndexOf(deleteId);
 
-                                if (int.TryParse(Console.ReadLine(), out int deleteId) && deleteId > 0)
+                                if (index != -1)
                                 {
-                                    if (employees.TryGetValue(deleteId, out Employee? employeeToDelete))
+                                    Console.WriteLine($"ID: {ids[index]} | {names[index]} {lastnames[index]} | ID Card: {idcards[index]} | Department: {empDepartments[index]} | Position: {empPositions[index]}");
+                                    Console.WriteLine("Are you sure you want to delete this employee? (yes/no)");
+                                    string confirm = (Console.ReadLine() ?? "").Trim().ToLower();
+
+                                    if (confirm == "yes" || confirm == "y")
                                     {
-                                        Console.WriteLine("============================");
-                                        Console.WriteLine($"Current information for employee ID {deleteId}:");
-                                        Console.WriteLine(employeeToDelete);
-                                        Console.WriteLine("============================");
+                                        ids.RemoveAt(index);
+                                        names.RemoveAt(index);
+                                        lastnames.RemoveAt(index);
+                                        idcards.RemoveAt(index);
+                                        empDepartments.RemoveAt(index);
+                                        empPositions.RemoveAt(index);
 
-                                        Console.WriteLine("Are you sure you want to delete this employee? (yes/no)");
-                                        string confirm = (Console.ReadLine() ?? "").Trim().ToLower();
-
-                                        if (confirm == "yes" || confirm == "y")
-                                        {
-                                            employees.Remove(deleteId);
-                                            Console.WriteLine("Employee deleted successfully.");
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine("Deletion cancelled.");
-                                        }
+                                        Console.WriteLine("Employee deleted successfully.");
                                     }
                                     else
                                     {
-                                        Console.WriteLine("Employee not found.");
+                                        Console.WriteLine("Deletion cancelled.");
                                     }
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Invalid ID format.");
+                                    Console.WriteLine("Employee not found.");
                                 }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid ID format.");
+                            }
 
-                                Console.WriteLine("Do you want to return to the main menu? (yes/no)");
-                                exit = (Console.ReadLine() ?? "").Trim().ToLower();
-
-                            } while (exit == "no" || exit == "n");
-
-                            Console.Clear();
                             break;
                         }
 
                     case "6":
                         {
-                            Console.Clear();
                             Console.WriteLine("--------List by Department----------");
 
-                            foreach (Department dep in listdepartments)
+                            foreach (KeyValuePair<int, string> d in departments)
                             {
-                                List<Employee> inDepartment = employees.Values
-                                    .Where(e => e.Department.Id == dep.Id)
-                                    .OrderBy(e => e.Id)
-                                    .ToList();
+                                Console.WriteLine($"== {d.Value} ==");
+                                int count = 0;
 
-                                Console.WriteLine($"== {dep.Name} ({inDepartment.Count} employees) ==");
+                                for (int i = 0; i < ids.Count; i++)
+                                {
+                                    if (empDepartments[i] == d.Value)
+                                    {
+                                        Console.WriteLine($"ID: {ids[i]} | {names[i]} {lastnames[i]} | ID Card: {idcards[i]} | Position: {empPositions[i]}");
+                                        count++;
+                                    }
+                                }
 
-                                if (inDepartment.Count == 0)
+                                if (count == 0)
                                 {
                                     Console.WriteLine("No employees in this department.");
-                                }
-                                else
-                                {
-                                    foreach (Employee emp in inDepartment)
-                                    {
-                                        Console.WriteLine(emp);
-                                    }
                                 }
 
                                 Console.WriteLine();
                             }
 
-                            Console.WriteLine("Press ENTER to return to the menu...");
-                            Console.ReadLine();
-                            Console.Clear();
                             break;
                         }
 
                     case "7":
-                        {
-                            Console.Clear();
-                            Console.WriteLine("--------Add Department----------");
-                            Console.WriteLine("Enter the department name:");
-
-                            string departmentName = (Console.ReadLine() ?? "").Trim();
-
-                            while (departmentName == "")
-                            {
-                                Console.WriteLine("Department name cannot be empty:");
-                                departmentName = (Console.ReadLine() ?? "").Trim();
-                            }
-
-                            if (listdepartments.Exists(d => d.Name.Equals(departmentName, StringComparison.OrdinalIgnoreCase)))
-                            {
-                                Console.WriteLine("Department already exists.");
-                            }
-                            else
-                            {
-                                listdepartments.Add(new Department
-                                {
-                                    Id = listdepartments.Count == 0 ? 1 : listdepartments.Max(d => d.Id) + 1,
-                                    Name = departmentName
-                                });
-
-                                Console.WriteLine("Department added successfully.");
-                            }
-
-                            Console.WriteLine("Press ENTER to return to the menu...");
-                            Console.ReadLine();
-                            Console.Clear();
-                            break;
-                        }
-
-                    case "8":
-                        {
-                            Console.Clear();
-                            Console.WriteLine("--------Add Position----------");
-                            Console.WriteLine("Enter the position name:");
-
-                            string positionName = (Console.ReadLine() ?? "").Trim();
-
-                            while (positionName == "")
-                            {
-                                Console.WriteLine("Position name cannot be empty:");
-                                positionName = (Console.ReadLine() ?? "").Trim();
-                            }
-
-                            if (listpositions.Exists(p => p.Name.Equals(positionName, StringComparison.OrdinalIgnoreCase)))
-                            {
-                                Console.WriteLine("Position already exists.");
-                            }
-                            else
-                            {
-                                listpositions.Add(new Position
-                                {
-                                    Id = listpositions.Count == 0 ? 1 : listpositions.Max(p => p.Id) + 1,
-                                    Name = positionName
-                                });
-
-                                Console.WriteLine("Position added successfully.");
-                            }
-
-                            Console.WriteLine("Press ENTER to return to the menu...");
-                            Console.ReadLine();
-                            Console.Clear();
-                            break;
-                        }
-
-                    case "9":
                         {
                             Console.WriteLine("Exiting the program...");
                             break;
@@ -678,9 +528,6 @@ class Program
                     default:
                         {
                             Console.WriteLine("Invalid option. Please try again.");
-                            Console.WriteLine("Press ENTER to continue...");
-                            Console.ReadLine();
-                            Console.Clear();
                             break;
                         }
                 }
@@ -688,47 +535,22 @@ class Program
             catch (Exception ex)
             {
                 Console.WriteLine($"Unexpected error: {ex.Message}");
+            }
+
+            if (opcion != "7")
+            {
                 Console.WriteLine("Press ENTER to return to the menu...");
                 Console.ReadLine();
                 Console.Clear();
             }
 
-        } while (opcion != "9");
+        } while (opcion != "7");
 
         Console.WriteLine("Thank you for using the Employee System.");
 
         return 0;
     }
 }
-
-public class Employee
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = "";
-    public string Lastname { get; set; } = "";
-    public string Idcard { get; set; } = "";
-    public Department Department { get; set; } = new Department();
-    public Position Position { get; set; } = new Position();
-
-    public override string ToString()
-    {
-        return $"ID: {Id} | {Name} {Lastname} | ID Card: {Idcard} | Department: {Department.Name} | Position: {Position.Name}";
-    }
-}
-
-public class Department
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = "";
-}
-
-public class Position
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = "";
-}
-
-
 
 
 
